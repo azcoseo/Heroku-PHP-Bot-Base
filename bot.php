@@ -1,22 +1,9 @@
-<?php
+﻿<?php
 
-ob_start();
-$load = sys_getloadavg();
-$telegram_ip_ranges = [
-['lower' => '149.154.160.0', 'upper' => '149.154.175.255'], 
-['lower' => '91.108.4.0',    'upper' => '91.108.7.255'],    
-];
-$ip_dec = (float) sprintf("%u", ip2long($_SERVER['REMOTE_ADDR']));
-$ok=false;
-foreach ($telegram_ip_ranges as $telegram_ip_range) if (!$ok) {
-$lower_dec = (float) sprintf("%u", ip2long($telegram_ip_range['lower']));
-$upper_dec = (float) sprintf("%u", ip2long($telegram_ip_range['upper']));
-if($ip_dec >= $lower_dec and $ip_dec <= $upper_dec) $ok=true;
-}
-if(!$ok) die("Fuck_You :)");
 error_reporting(0);
-$token = '5144162739:AAFWQAA-lbwt4NEPuT56dLrpDuC3RsTm718'; //توکن بذارید
+$token = '5275774113:AAG8IFVxKxLK31ozIUwE_424ItCFbOH62FQ';
 define('API_KEY',$token);
+include("jdf.php");
 function bot($method,$datas=[]){
     $url = "https://api.telegram.org/bot".API_KEY."/".$method;
     $ch = curl_init();
@@ -183,7 +170,7 @@ $db = file_get_contents(json_decode('data.json',true));
 $gif = file_get_contents("media/gif.txt");
 $vid = file_get_contents("media/vid.txt");
 $pics = file_get_contents("media/pic.txt");
-$sudo = ["895525405","895525405","895525405"]; //آیدی عددی  ادمین 
+$sudo = ["895525405"]; //آیدی عددی ادمین
 $channel = file_get_contents("channel.txt");
 $tc = $update->message->chat->type;
 $truechannel = json_decode(file_get_contents("https://api.telegram.org/bot$token/getChatMember?chat_id=@$channel&user_id=".$from_id));
@@ -192,46 +179,6 @@ $bot_date = date('Ymd');
 $step = file_get_contents("step.txt");
 mkdir("media");
 
-if(in_array($from_id, $list['ban'])){
-SendMessage($chat_id,"
-شما از این ربات مسدود شده اید ❌
-",null);
-exit();
-}else{
-function Spam($from_id){
-@mkdir("spam");
-$spam_status = json_decode(file_get_contents("$from_id.json"),true);
-if($spam_status != null){
-if(mb_strpos($spam_status[0],"time") !== false){
-if(str_replace("time ",null,$spam_status[0]) >= time())
-exit(false);
-else
-$spam_status = [1,time()+2];
-}
-elseif(time() < $spam_status[1]){
-if($spam_status[0]+1 > 3){
-$time = time() + 100;
-$spam_status = ["time $time"];
-file_put_contents("$from_id.json",json_encode($spam_status,true));
-bot('SendMessage',[
-'chat_id'=>$from_id,
-'text'=>"⚠️به علت اسپم به مدت ۱۰۰ ثانیه مسدود شده اید ❗️ 
-✅لطفا با ربات آهسته کار کنید !"
-]);
-exit(false);
-}else{
-$spam_status = [$spam_status[0]+1,$spam_status[1]];
-}
-}else{
-$spam_status = [1,time()+2];
-}
-}else{
-$spam_status = [1,time()+2];
-}
-file_put_contents("$from_id.json",json_encode($spam_status,true));
-}
-}
-Spam($from_id);
 ///////////
 $keyMedia = json_encode([
       'keyboard'=> [
@@ -242,13 +189,13 @@ $keyMedia = json_encode([
 
 $keyHome = json_encode([
       'keyboard'=> [
-      [['text'=> 'Ƥнστσ ∏εш 🔞'],['text'=> 'Ʋιdεσ ∏εш 🔞']],
-      [['text'=>"Gιғ ∏εш 🔞"]],
+      [['text'=> '🖼عکس🖼'],['text'=> '🎞فیلم🎞']],
+      [['text'=>"📀گیف📀"]],
       ],'resize_keyboard'=> true
 ]);
 $keyPanel = json_encode([
       'keyboard'=> [
-      [['text'=> 'آمار'],['text'=>"تنظیم کانال جوین اجباری �"]],
+      [['text'=> 'آمار'],['text'=>"تنظیم کانال جوین اجباری 🔊"]],
       [['text'=>"📍 ارسال به همه"],['text'=>"📍 فروارد همگانی"]],
          [['text'=> 'افزودن مدیا +'],['text'=>'/start']],
       ],'resize_keyboard'=> true
@@ -262,8 +209,6 @@ $keyRemove = json_encode([
       'ReplyKeyboardRemove'=>[
        []
       ],'remove_keyboard'=> true
-      
-      
 ]);
 
   $user = file_get_contents('members.txt');
@@ -276,13 +221,14 @@ $keyRemove = json_encode([
 if(preg_match('/^\/start$/i',$text)){
     bot('sendmessage',[
 'chat_id'=>$chat_id,
-'text'=>"🌹سلام به ربات ما خوش اومدی با این ربات میتونی بی نهایت فیلم بگیری🥰",
+'text'=>"🌹سلام به ربات ما خوش اومدی با این ربات میتونی بی نهایت فیلم بگیری🥰
+🌹Hi, Welcome to our robot with this robot you can get endless videos!🥰",
 'reply_markup'=>$keyHome
 ]);
 }
 
 
-if($text == 'Ƥнστσ ∏εш 🔞'){
+if($text == '🖼عکس🖼'){
 $tch = Bot('getChatMember',['chat_id'=>"@$channel",'user_id'=>$from_id])->result->status;
 if($tch == 'member' | $tch == 'creator' | $tch == 'administrator'){
     $jo = $mphoto + 1;
@@ -294,14 +240,18 @@ if($tch == 'member' | $tch == 'creator' | $tch == 'administrator'){
   'chat_id'=>$chat_id,
 'photo'=>"$send",
 'caption'=>"ربات فول سکسیمون♥️😵💦
+@SexyTdlbot
 کص زن آدم دروغگو😒😒😒
 ",
   ]);
-    $nop = 20;////بعد از چند ثانیه پاک بشه
+    $nop = 13;////بعد از چند ثانیه پاک بشه
       $send = bot('sendmessage',[
   'chat_id'=>$chat_id,
 'text'=>"<pre>عکس بالا در <i>$nop</i> ثانیه دیگر به صورت خودکار پاک میشود.
 لطفا آن را برای پیام های ذخیره شده ارسال کنید.</pre>
+
+
+ربات دوم را استارت کنین اگه این ربات حذف شد اونجا فیلم میزاریم 😍👈🏻 @SexyTdl1Bot
 ",
 'parse_mode'=>'HTML',     
 ]);
@@ -314,6 +264,8 @@ $id = $send->result->message_id;
                 'message_id'=>$id,
 'text'=>"<pre>عکس بالا در <i>$nop</i> ثانیه دیگر به صورت خودکار پاک میشود.
 لطفا آن را برای پیام های ذخیره شده ارسال کنید.</pre>
+
+ربات دوم را استارت کنین اگه این ربات حذف شد اونجا فیلم میزاریم 😍👈🏻 @SexyTdl1Bot
 ",
 'parse_mode'=>'HTML',     
 ]);}
@@ -338,7 +290,7 @@ sleep(1);
 ]);
 }}
 
-if($text == 'Ʋιdεσ ∏εш 🔞'){
+if($text == '🎞فیلم🎞'){
 $tch = Bot('getChatMember',['chat_id'=>"@$channel",'user_id'=>$from_id])->result->status;
 if($tch == 'member' | $tch == 'creator' | $tch == 'administrator'){
        $jo = $mvideo + 1;
@@ -351,14 +303,17 @@ if($tch == 'member' | $tch == 'creator' | $tch == 'administrator'){
 'video'=>"$send",
    'parse_mode'=>'HTML',
    'caption'=>"ربات فول سکسیمون♥️😵💦
+@SexyTdlbot
 کص زن آدم دروغگو😒😒😒
 ",
    ]);
-    $nop = 20;////بعد از چند ثانیه پاک بشه
+    $nop = 13;////بعد از چند ثانیه پاک بشه
       $send = bot('sendmessage',[
   'chat_id'=>$chat_id,
 'text'=>"<pre>فیلم بالا در <i>$nop</i> ثانیه دیگر به صورت خودکار پاک میشود.
 لطفا آن را برای پیام های ذخیره شده ارسال کنید.</pre>
+
+ربات دوم را استارت کنین اگه این ربات حذف شد اونجا فیلم میزاریم 😍👈🏻 @SexyTdl1Bot
 ",
 'parse_mode'=>'HTML',     
 ]);
@@ -371,6 +326,8 @@ $id = $send->result->message_id;
                 'message_id'=>$id,
 'text'=>"<pre>فیلم بالا در <i>$nop</i> ثانیه دیگر به صورت خودکار پاک میشود.
 لطفا آن را برای پیام های ذخیره شده ارسال کنید.</pre>
+
+ربات دوم را استارت کنین اگه این ربات حذف شد اونجا فیلم میزاریم 😍👈🏻 @SexyTdl1Bot
 ",
 'parse_mode'=>'HTML',     
 ]);}
@@ -395,7 +352,7 @@ sleep(1);
 ]);
 }}
 
-elseif($text == 'Gιғ ∏εш 🔞'){
+elseif($text == '📀گیف📀'){
 $tch = Bot('getChatMember',['chat_id'=>"@$channel",'user_id'=>$from_id])->result->status;
 if($tch == 'member' | $tch == 'creator' | $tch == 'administrator'){
     if(file_exists("media/gif.txt")){
@@ -409,14 +366,17 @@ if($tch == 'member' | $tch == 'creator' | $tch == 'administrator'){
 'document'=>"$send",
    'parse_mode'=>'HTML',
 'caption'=>"ربات فول سکسیمون♥️😵💦
+@SexyTdlbot
 کص زن آدم دروغگو😒😒😒
 ",
    ]);
-    $nop = 20;////بعد از چند ثانیه پاک بشه
+    $nop = 13;////بعد از چند ثانیه پاک بشه
       $send = bot('sendmessage',[
   'chat_id'=>$chat_id,
 'text'=>"<pre>گیف بالا در <i>$nop</i> ثانیه دیگر به صورت خودکار پاک میشود.
 لطفا آن را برای پیام های ذخیره شده ارسال کنید.</pre>
+
+ربات دوم را استارت کنین اگه این ربات حذف شد اونجا فیلم میزاریم 😍👈🏻 @SexyTdl1Bot
 ",
 'parse_mode'=>'HTML',     
 ]);
@@ -429,6 +389,8 @@ $id = $send->result->message_id;
                 'message_id'=>$id,
 'text'=>"<pre>گیف بالا در <i>$nop</i> ثانیه دیگر به صورت خودکار پاک میشود.
 لطفا آن را برای پیام های ذخیره شده ارسال کنید.</pre>
+
+ربات دوم را استارت کنین اگه این ربات حذف شد اونجا فیلم میزاریم 😍👈🏻 @SexyTdl1Bot
 ",
 'parse_mode'=>'HTML',     
 ]);}
@@ -477,9 +439,10 @@ elseif($text == 'آمار' && in_array($from_id , $sudo)){
     $picc = count(explode(",", $pics)) - 1;
     $vidd = count(explode(",", $vid)) - 1;
     $giff = count(explode(",", $gif)) - 1;
+    $time = jdate('آخرین بروزرسانی در ساعت H:i:s روز l انجام شد.');   
 	 bot('sendmessage',[
 'chat_id'=>$chat_id,
-'text'=>"💎تعداد اعضا : $counts ■تعداد فیلم ها : $vidd ■ تعداد عکس ها : $picc ■ تعداد گیف ها : $giff",
+'text'=>"آمار کاربران ربات <b><i>$counts</i></b> نفر میباشد".PHP_EOL."تعداد <b><i>$picc</i></b> عکس و <b><i>$vidd</i></b> فیلم و <b><i>$giff</i></b> گیف موجود است.".PHP_EOL."$time",
 'parse_mode'=>'HTML',
    ]);
 }
@@ -612,6 +575,4 @@ save("step.txt",'none');
 SendMessage($chat_id,"✅ به منوی اصلی بازگشتید !
 ◀️لطفا یکی از قسمت های زیر را جهت ورود انتخاب نمایید.",'HTML',$keyHome,$message_id);
 }
-
-
 ?>
