@@ -1,7 +1,7 @@
 ﻿<?php
 
 error_reporting(0);
-$token = '5275774113:AAG8IFVxKxLK31ozIUwE_424ItCFbOH62FQ';
+$token = '5181508536:AAGw8p68-bSJ_wu8WJYm1HOz1ldvxnqA23Y';
 define('API_KEY',$token);
 include("jdf.php");
 function bot($method,$datas=[]){
